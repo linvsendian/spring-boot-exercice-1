@@ -1,0 +1,11 @@
+{
+  "developerName": "Endian Lin",
+  "developerEmail": "endianlin@gmail.com",
+  "modelPackage": "com.exercice.business.rate.model",
+  "apiPackage": "com.exercice.business.rate.api",
+  "dateLibrary": "java8",
+  "useBeanValidation": true,
+  "interfaceOnly": true,
+  "useOptional": true,
+  "library": "spring-boot"
+}

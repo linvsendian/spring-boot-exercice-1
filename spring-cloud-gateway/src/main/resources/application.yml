@@ -1,0 +1,43 @@
+base:
+  config:
+    nacos:
+      hostname: localhost
+      port: 8848
+
+spring:
+  application:
+    name: gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${base.config.nacos.hostname}:${base.config.nacos.port}
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - 'GET'
+              - 'POST'
+            allowedHeaders: "*"
+      routes:
+        - id: BUSINESS-RATE
+          uri: lb://business-rate
+          predicates:
+            - Path=/api/rate/**
+          filters:
+            - StripPrefix=1
+
+server:
+  port: 8888
+
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+#  file:
+#    path: logs/gateway

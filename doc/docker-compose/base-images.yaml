@@ -1,0 +1,40 @@
+version: '3.1'
+services:
+  postgresql:
+    image: postgis/postgis
+    container_name: postgresql
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=user
+    volumes:
+      - /usr/local/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      exercice_network:
+        ipv4_address: 172.20.0.254
+
+  nacos:
+    image: nacos/nacos-server:v2.0.3
+    container_name: nacos
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+    # volumes:
+    # - ./standalone-logs/:/home/nacos/logs
+    # - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8848:8848"
+    restart: always
+    networks:
+      exercice_network:
+        ipv4_address: 172.20.0.251
+
+networks:
+  exercice_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

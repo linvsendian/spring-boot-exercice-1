@@ -1,0 +1,51 @@
+base:
+  config:
+    nacos:
+      hostname: localhost
+      port: 8848
+
+spring:
+  application:
+    name: business-rate
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  jackson:
+    time-zone: GMT+2
+    date-format: yyyy-MM--dd HH:mm:ss
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${base.config.nacos.hostname}:${base.config.nacos.port}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+dubbo:
+  scan:
+    base-packages: com.exercice.business.rate.controller
+  protocol:
+    name: dubbo
+    port: -1
+    serialization: kryo
+  registry:
+    address: nacos://${base.config.nacos.hostname}
+    port: ${base.config.nacos.port}
+    use-as-metadata-center: true
+  cloud:
+    subscribed-services: persistence-rate, persistence-currency
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+
+logging:
+  level:
+    root: info
+#  file:
+#    path: logs/business-rate

@@ -1,0 +1,56 @@
+base:
+  config:
+    postgresql:
+      hostname: localhost
+      port: 5432
+      user: user
+      password: pass
+    nacos:
+      hostname: localhost
+      port: 8848
+
+spring:
+  application:
+    name: persistence-currency
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${base.config.nacos.hostname}:${base.config.nacos.port}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${base.config.postgresql.hostname}:${base.config.postgresql.port}/exercicedb
+    username: ${base.config.postgresql.user}
+    password: ${base.config.postgresql.password}
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+  jackson:
+    time-zone: GMT+2
+    date-format: dd-MM-yyyy HH:mm:ss
+
+dubbo:
+  scan:
+    base-packages: com.exercice.persistence.currency.service
+  protocol:
+    name: dubbo
+    port: -1
+    serialization: kryo
+  registry:
+    address: nacos://${base.config.nacos.hostname}
+    port: ${base.config.nacos.port}
+    use-as-metadata-center: true
+  metadata-report:
+    address: nacos://${base.config.nacos.hostname}:${base.config.nacos.port}
+  cloud:
+    subscribed-services: ''
+
+logging:
+  level:
+    root: info
+#  file:
+#    path: logs/persistence-currency

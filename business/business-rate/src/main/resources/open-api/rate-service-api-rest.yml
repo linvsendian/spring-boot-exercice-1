@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: Rate Api
+  description: Handle the info about rates in platform
+  version: "1.0"
+tags:
+  - name: Rate
+    description: Available operations for rates domain.
+paths:
+  /v1/rate/insert:
+    post:
+      tags:
+        - Rate
+      summary: Insert a new rate
+      operationId: insertRate
+      requestBody:
+        description: New rate to insert
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateModel'
+      responses:
+        200:
+          description: successful operation
+        401:
+          description: Authentication is required to get the requested response
+        404:
+          description: Rate not found
+  /v1/rate/{rateId}:
+    get:
+      tags:
+        - Rate
+      summary: Get rate detail
+      operationId: getRateById
+      parameters:
+        - in: path
+          description: The rate ID
+          name: rateId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateResponse'
+
+        401:
+          description: Authentication is required to get the requested response
+        404:
+          description: Rate not found
+  /v1/rate/update:
+    post:
+      tags:
+        - Rate
+      summary: Update a rate
+      operationId: updateRate
+      requestBody:
+        description: Update rate properties such as price, currencyCode, etc.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateUpdateModel'
+      responses:
+        200:
+          description: successful operation
+        401:
+          description: Authentication is required to get the requested response
+        404:
+          description: Rate not found
+
+  /v1/rate/delete:
+    post:
+      tags:
+        - Rate
+      summary: Delete a rate
+      operationId: deleteRateById
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Rate ID
+      responses:
+        200:
+          description: successful operation
+        401:
+          description: Authentication is required to get the requested response
+        404:
+          description: Rate not found
+  /v1/rate/search:
+    post:
+      tags:
+        - Rate
+      summary: Seach a rate
+      operationId: searchRateByFilter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateFilter'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RateResponse'
+        401:
+          description: Authentication is required to get the requested response
+        404:
+          description: Rate not found
+
+components:
+  schemas:
+    RateModel:
+      type: object
+      properties:
+        brandId:
+          type: integer
+          description: Brand ID
+          example: 1
+        productId:
+          type: integer
+          description: Product ID
+          example: 1
+        startDate:
+          type: string
+          format: date
+          description: Rate init date
+          example: "2021-01-20"
+        endDate:
+          type: string
+          format: date
+          description: Rate end date
+          example: "2021-02-20"
+        price:
+          type: number
+          multipleOf: 0.01
+          example: 23.00
+        currencyCode:
+          type: string
+          description: Currency ISO code
+          example: "EUR"
+
+      required:
+        - brandId
+        - productId
+        - startDate
+        - endDate
+        - price
+        - currencyCode
+    RateUpdateModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Rate ID
+          example: 1
+        price:
+          type: integer
+          example: 23
+      required:
+        - id
+        - price
+    RateResponse:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Rate ID
+              example: 1
+            currencySymbol:
+              type: string
+              example: "€"
+            priceFormatted:
+              type: string
+              description: Price formatted
+              example: "19.95€"
+          required:
+            - id
+            - currencySymbol
+            - priceFormatted
+        - $ref: '#/components/schemas/RateModel'
+    RateFilter:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Valid rate in date
+          example: "2021-02-20"
+        productId:
+          type: integer
+          description: Product ID
+          example: 1
+        brandId:
+          type: integer
+          description: Brand ID
+          example: 1
+
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+security:
+  - basicAuth: [ ]
